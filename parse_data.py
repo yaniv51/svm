@@ -8,10 +8,11 @@ def parse_data(data_file_full_path):
     final_x_matrix = list()
     final_y_vector = list()
     missing_vectors = list()
-
+    count = 0
     #print data_file_full_path
     f = open(data_file_full_path, "r")
     for line in f:
+        count = count+1
         if line.startswith('|'):
             continue
 
