@@ -1,0 +1,10 @@
+{"installed":
+  {"client_id":"915643700669-m6l5juq50vu4v84uk2v4n3rnh3ga4ptt.apps.googleusercontent.com",
+    "project_id":"famous-archway-151316",
+    "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+    "token_uri":"https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret":"GYqLQgRcuzpaojkIzd2GUmTP",
+    "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]
+  }
+}

@@ -3,12 +3,13 @@ from Tkinter import *
 from svm_handler import *
 from svm_handler import SVMHandler
 from calc_error_pct import *
-#from mail import sendemail
+from mail import send_email
 
 
 class SVMGui:
     def __init__(self):
         self.root = Tk()
+        self.err_percent = -1
         self.is_running = False
         self.already_tested = False
         self.root.title("SVM GUI")
@@ -60,7 +61,8 @@ class SVMGui:
             t.start()
 
         def send_mail():
-            tkMessageBox.showinfo("Hello Python", "Send email")
+            t = threading.Thread(target=self.send_message, args=(self.generate_message(self.err_percent),))
+            t.start()
 
         data_path_button = Button(self.root, text="Open", command=data_path_callback)
         data_path_button.grid(row=0, column=2)
@@ -81,6 +83,18 @@ class SVMGui:
         self.center_window()
         self.root.mainloop()
 
+    def generate_message(self, value):
+        if value < 0:
+            message = "Testing send Email by Yaniv Israel program"
+        else:
+            message = "Error percent: " + "%.3f" % value + " by SVM machine learning"
+        return message
+
+    def send_message(self, text):
+        result = send_email(text)
+        tkMessageBox.showinfo("EMail information", result)
+
+
     def center_window(self, width=680, height=100):
         # get screen width and height
         screen_width = self.root.winfo_screenwidth()
@@ -99,9 +113,10 @@ class SVMGui:
                 self.svm_handler.initialize_training(path)
                 self.already_tested = True
             else:
-                y, predicted_y = self.svm_handler.init_data(path)
-                err_precent = calculate_error_percentage(y, predicted_y)
-                tkMessageBox.showinfo("Error precent", err_precent)
+                self.svm_handler.init_data(path)
+                self.err_percent = self.svm_handler.get_error_Percent()
+
+                tkMessageBox.showinfo("Error Percent", self.err_percent)
         except IOError:
             self.show_error("Could not open file: "+path)
         self.is_running = False
