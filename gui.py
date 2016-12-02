@@ -1,8 +1,7 @@
 import tkFileDialog, os, threading
 from Tkinter import *
-from svm_handler import *
+import tkMessageBox
 from svm_handler import SVMHandler
-from calc_error_pct import *
 from mail import send_email
 
 
@@ -94,7 +93,6 @@ class SVMGui:
         result = send_email(text)
         tkMessageBox.showinfo("EMail information", result)
 
-
     def center_window(self, width=680, height=100):
         # get screen width and height
         screen_width = self.root.winfo_screenwidth()
@@ -110,11 +108,12 @@ class SVMGui:
         tkMessageBox.showinfo("Wait", "In progress...")
         try:
             if train:
-                self.svm_handler.initialize_training(path)
+                self.svm_handler.run_training(path)
                 self.already_tested = True
             else:
-                self.svm_handler.init_data(path)
+                self.svm_handler.run_test(path)
                 self.err_percent = self.svm_handler.get_error_Percent()
+                self.svm_handler.print_results()
 
                 tkMessageBox.showinfo("Error Percent", self.err_percent)
         except IOError:
