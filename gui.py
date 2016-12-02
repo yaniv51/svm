@@ -1,16 +1,17 @@
-import tkFileDialog, os
+import tkFileDialog, os, threading
 from Tkinter import *
 from svm_handler import *
 from svm_handler import SVMHandler
 from calc_error_pct import *
-#import ttk
 #from mail import sendemail
-#import threading
 
-class SVMGui(Frame):
-    def __init__(self, root):
-        Frame.__init__(self, root)
-        self.root = root
+
+class SVMGui:
+    def __init__(self):
+        self.root = Tk()
+        self.is_running = False
+        self.already_tested = False
+        self.root.title("SVM GUI")
         self.init_widgets()
 
     def init_widgets(self):
@@ -33,16 +34,30 @@ class SVMGui(Frame):
                 data_path.configure(state='disabled')
 
         def activate_train():
+            if self.is_running:
+                self.show_error("In progress. Please wait")
+                return
             self.svm_handler = SVMHandler()
-            tkMessageBox.showinfo("Hello Python", data_path.get("1.0", 'end-1c') + "adult.test")
-            self.svm_handler.initialize_training(data_path.get("1.0",'end-1c')+ "adult.test")
-            tkMessageBox.showinfo("Hello Python", "End train")
+            path = data_path.get("1.0", 'end-1c')
+            if not path.endswith('/'):
+                path+="/"
+            path += "adult.test"
+            t = threading.Thread(target=self.run_test, args=(path, True,))
+            t.start()
 
         def activate_test():
-            tkMessageBox.showinfo("Hello Python", data_path.get("1.0", 'end-1c') + "adult.data")
-            y, predicted_y = self.svm_handler.init_data(data_path.get("1.0",'end-1c')+ "adult.data")
-            err_precent = calculate_error_percentage(y, predicted_y)
-            tkMessageBox.showinfo("Error precent", err_precent)
+            if self.is_running:
+                self.show_error("In progress. Please wait")
+                return
+            if not self.already_tested:
+                self.show_error("You have to train machine first!")
+                return
+            path = data_path.get("1.0", 'end-1c')
+            if not path.endswith('/'):
+                path += "/"
+            path += "adult.data"
+            t = threading.Thread(target=self.run_test, args=(path, False,))
+            t.start()
 
         def send_mail():
             tkMessageBox.showinfo("Hello Python", "Send email")
@@ -59,11 +74,43 @@ class SVMGui(Frame):
         send_email_button = Button(self.root, text="Send results", command=send_mail)
         send_email_button.grid(row=2, column=0)
 
+    def show_error(self, error):
+        tkMessageBox.showinfo("Error", error)
+
+    def run(self):
+        self.center_window()
+        self.root.mainloop()
+
+    def center_window(self, width=680, height=100):
+        # get screen width and height
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        # calculate position x and y coordinates
+        x = (screen_width / 2) - (width / 2)
+        y = (screen_height / 2) - (height / 2)
+        self.root.geometry('%dx%d+%d+%d' % (width, height, x, y))
+
+    def run_test(self, path, train):
+        self.is_running = True
+        tkMessageBox.showinfo("Wait", "In progress...")
+        try:
+            if train:
+                self.svm_handler.initialize_training(path)
+                self.already_tested = True
+            else:
+                y, predicted_y = self.svm_handler.init_data(path)
+                err_precent = calculate_error_percentage(y, predicted_y)
+                tkMessageBox.showinfo("Error precent", err_precent)
+        except IOError:
+            self.show_error("Could not open file: "+path)
+        self.is_running = False
+        tkMessageBox.showinfo("Wait", "Finished")
+
+
 def run_gui():
-    root = Tk()
-    root.title("SVM GUI")
-    gui = SVMGui(root)
-    root.mainloop()
+    gui = SVMGui()
+    gui.run()
 
 if __name__ == "__main__":
     run_gui()
