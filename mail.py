@@ -42,8 +42,7 @@ def send_message(user_id, message, service):
 
 
 def create_message(message_text):
-    # to = 'hadas.c@velismedia.com'
-    to = 'yaniv.israel@gmail.com'
+    to = 'hadas.c@velismedia.com'
     sender = '51.yaniv51@gmail.com'
     subject = 'Finished The Program'
 
@@ -52,6 +51,7 @@ def create_message(message_text):
     message['from'] = sender
     message['subject'] = subject
     message['text'] = message_text
+
     return {'raw': base64.urlsafe_b64encode(message.as_string())}
 
 
