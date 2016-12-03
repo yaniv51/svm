@@ -33,28 +33,48 @@ native_country_values = ['United-States', 'Cambodia', 'England', 'Puerto-Rico',
 def parse(split_line_array):
     """ each line will be converted to the correct numeric value and will be inserted to a 1xM vector (x vector)
     """
-    
     x = list()
     # Age
     x.append(split_line_array[0])
     # Work-class
-    x.append(work_class_values.index(split_line_array[1]))
+    if split_line_array[1] != "?":
+        x.append(work_class_values.index(split_line_array[1]))
+    else:
+        x.append(-1)
     # fnlwgt
     x.append(split_line_array[2])
     # Education
-    x.append(education_values.index(split_line_array[3]))
+    if split_line_array[3] != "?":
+        x.append(education_values.index(split_line_array[3]))
+    else:
+        x.append(-1)
     # Education-num
     x.append(split_line_array[4])
     # Martial-status
-    x.append(marital_status_values.index(split_line_array[5]))
+    if split_line_array[5] != "?":
+        x.append(marital_status_values.index(split_line_array[5]))
+    else:
+        x.append(-1)
     # Occupation
-    x.append(occupation_values.index(split_line_array[6]))
+    if split_line_array[6] != "?":
+        x.append(occupation_values.index(split_line_array[6]))
+    else:
+        x.append(-1)
     # Relationship
-    x.append(relationship_values.index(split_line_array[7]))
+    if split_line_array[7] != "?":
+        x.append(relationship_values.index(split_line_array[7]))
+    else:
+        x.append(-1)
     # Race
-    x.append(race_values.index(split_line_array[8]))
+    if split_line_array[8] != "?":
+        x.append(race_values.index(split_line_array[8]))
+    else:
+        x.append(-1)
     # Sex
-    x.append(sex_values.index(split_line_array[9]))
+    if split_line_array[9] != "?":
+        x.append(sex_values.index(split_line_array[9]))
+    else:
+        x.append(-1)
     # Capital-gain
     x.append(split_line_array[10])
     # Capital-loss
@@ -62,7 +82,10 @@ def parse(split_line_array):
     # Hours-per-week
     x.append(split_line_array[12])
     # Native-country
-    x.append(native_country_values.index(split_line_array[13]))
+    if split_line_array[13] != "?":
+        x.append(native_country_values.index(split_line_array[13]))
+    else:
+        x.append(-1)
 
     y_value = str(split_line_array[14])
     if y_value.__contains__('<=50K'):
