@@ -63,6 +63,13 @@ class SVMGui:
             t = threading.Thread(target=self.send_message, args=(self.generate_message(self.err_percent),))
             t.start()
 
+        def destroy_gui():
+            if self.is_running:
+                self.show_error("Could not exit while in progress. Please wait...")
+                return
+            if tkMessageBox.askokcancel("Exit", "Exit SVM GUI?"):
+                self.root.destroy()
+
         data_path_button = Button(self.root, text="Open", command=data_path_callback)
         data_path_button.grid(row=0, column=2)
 
@@ -75,6 +82,9 @@ class SVMGui:
         send_email_button = Button(self.root, text="Send results", command=send_mail)
         send_email_button.grid(row=2, column=0)
 
+        quit_button = Button(self.root, text="Exit", command=destroy_gui)
+        quit_button.grid(row=2, column=1)
+
     def show_error(self, error):
         tkMessageBox.showinfo("Error", error)
 
@@ -84,9 +94,10 @@ class SVMGui:
 
     def generate_message(self, value):
         if value < 0:
-            message = "Testing send Email by Yaniv Israel program"
+            message = "Testing send Email by Yaniv Israel program."
         else:
-            message = "Error percent: " + "%.3f" % value + " by SVM machine learning"
+            message = " Error percent: " + "%.3f" % value + " by SVM machine learning."
+        message += " My source code is available on my GitHub: https://github.com/yaniv51/svm"
         return message
 
     def send_message(self, text):
